@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up - JUGAAD Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary: #4facfe;
+            --secondary: #43e97b;
+            --accent: #fa709a;
+            --bg: #fff;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s;
+        }
+        .auth-container {
+            max-width: 400px;
+            width: 100%;
+            margin: 60px auto;
+            background: var(--bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 40px 32px 32px 32px;
+            position: relative;
+            animation: fadeIn 0.8s;
+        }
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: #444;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.15);
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: #fff;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 8px;
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            transform: translateY(-2px) scale(1.03);
+        }
+        .btn-signup {
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+        .toggle-link {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .toggle-link:hover {
+            color: var(--accent);
+        }
+        .margin-top-16 {
+            margin-top: 16px;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 500px) {
+            .auth-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container" id="authContainer">
+        <h2 id="authTitle">Login</h2>
+        <!-- Login Form -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="loginEmail" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <p class="margin-top-16">Don't have an account? <span class="toggle-link" onclick="showSignup()">Sign up</span></p>
+        </form>
+        <!-- Signup Form -->
+        <form id="signupForm" class="hidden">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="registerName" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="registerEmail" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+            <button type="submit" class="btn btn-signup">Sign Up</button>
+                <input type="password" class="form-input" id="registerPassword" placeholder="Create a password" required>
+            </div>
+            <button type="submit" class="btn" style="background: linear-gradient(90deg, var(--accent), var(--primary));">Sign Up</button>
+            <p class="margin-top-16">Already have an account? <span class="toggle-link" onclick="showLogin()">Login</span></p>
+        </form>
+    </div>
+    <script>
+        function showSignup() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+            document.getElementById('authTitle').textContent = 'Sign Up';
+            document.getElementById('authContainer').style.boxShadow = '0 8px 32px rgba(250,112,154,0.15)';
+        }
+        function showLogin() {
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('authTitle').textContent = 'Login';
+            document.getElementById('authContainer').style.boxShadow = '0 4px 24px rgba(79,172,254,0.15)';
+        }
+        // Handle login
+        document.getElementById('loginForm').onsubmit = function(e) {
+            e.preventDefault();
+            // You can add real authentication here
+            document.body.style.background = "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)";
+            setTimeout(() => {
+                alert('Login successful! Redirecting...');
+                window.location.href = "index.html";
+            }, 400);
+        }
+        // Handle signup
+        document.getElementById('signupForm').onsubmit = function(e) {
+            e.preventDefault();
+            // You can add real registration here
+            document.body.style.background = "linear-gradient(135deg, #fa709a 0%, #fee140 100%)";
+            setTimeout(() => {
+                alert('Registration successful! Redirecting...');
+                window.location.href = "index.html";
+            }, 400);
+        }
+    </script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 // This file contains utility functions for making API calls to the backend.
 // It exports functions for fetching items, user data, purchase history, and submitting reviews.
 
-const API_BASE_URL = 'https://api.jugaadmarketplace.com'; // Replace with your actual API base URL
+const API_BASE_URL = '/api'; // Using relative path for proxy
 
 export const fetchItems = async () => {
     try {

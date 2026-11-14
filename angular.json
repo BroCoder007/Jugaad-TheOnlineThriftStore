@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "projects": {
+    "frontend": {
+      "projectType": "application",
+      "root": "frontend",
+      "sourceRoot": "frontend/src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "frontend/src/main.ts",
+            "index": "frontend/src/index.html",
+            "tsConfig": "frontend/tsconfig.json",
+            "styles": ["frontend/src/styles.css"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "frontend/public",
+                "output": "/"
+              }
+            ],
+            "outputPath": "dist/frontend",
+            "optimization": {
+              "styles": {
+                "minify": true,
+                "inlineCritical": false
+              },
+              "scripts": true,
+              "fonts": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "frontend:build"
+          }
+        }
+      }
+    }
+  }
+}

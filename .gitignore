@@ -29,3 +29,8 @@ server/jugaad.db
 # IDEs
 .vscode/
 .idea/
+
+.angular/
+work/
+.env.*
+!.env.example

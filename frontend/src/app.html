@@ -1,0 +1,303 @@
+<a class="skip" href="#finds">Skip to finds</a>
+<header>
+  <a class="wordmark" href="#">jugaad<span>®</span></a>
+  <nav aria-label="Main navigation">
+    <a href="#finds">The finds</a
+    ><button (click)="exchanges()">My exchanges</button>@if(session()){<button
+      (click)="logout()"
+    >
+      Sign out</button
+    >}@else{<button (click)="open('auth')">Sign in ↗</button>}<button
+      class="pill"
+      (click)="open('sell')"
+    >
+      Pass it on +
+    </button>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="orbit"></div>
+    <p class="eyebrow">LESS NEW. MORE YOU. / THE SECONDHAND EDIT</p>
+    <h1>Good things.<br /><span>Again.</span><i>↗</i></h1>
+    <div class="hero-bottom">
+      <p>Some things deserve<br />another beginning.</p>
+      <a class="round" href="#finds" aria-label="Discover the finds">↓</a>
+      <p>Buy a little differently.<br />Pass on something good.</p>
+    </div>
+    <div class="edition">JUGAAD / CIRCULAR BY NATURE</div>
+  </section>
+  <div class="ticker" aria-hidden="true">
+    <span
+      >NEW STORIES. SAME GOOD THINGS. ✳ NEW STORIES. SAME GOOD THINGS. ✳
+    </span>
+  </div>
+  <section class="market" id="finds">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">01 / THE FINDS</p>
+        <h2>Your next<br />good find.</h2>
+      </div>
+      <p>
+        Pre-loved. Still full of possibility.<br />Find it. Make an offer. Make
+        it yours.
+      </p>
+    </div>
+    <form class="search" (ngSubmit)="load()">
+      <label class="sr" for="search">Search listings</label
+      ><input
+        id="search"
+        name="query"
+        [(ngModel)]="query"
+        placeholder="What are you looking for?"
+      /><button [disabled]="busy()">Search ↗</button>
+    </form>
+    <div class="categories">
+      @for(c of ['', 'Wear','Living','Tech','Books'];track c){<button
+        [class.active]="category===c"
+        (click)="filter(c)"
+      >
+        {{c||'All finds'}}</button
+      >}
+    </div>
+    @if(busy()){
+    <p role="status">Finding the good stuff…</p>
+    }
+    <div class="grid">
+      @for(item of items();track item._id){<button
+        class="card"
+        (click)="choose(item)"
+      >
+        <div class="image">
+          <img
+            [src]="item.image"
+            [alt]="item.title"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          /><span
+            >{{item.status==='sold'?'Found a new home':item.condition}}</span
+          ><b>↗</b>
+        </div>
+        <div class="card-meta">
+          <span>{{item.category}}</span><span>{{money(item.price)}}</span>
+        </div>
+        <h3>{{item.title}}</h3>
+        <p>Listed by {{item.alias}}</p></button
+      >}@empty{
+      <div class="empty">
+        <h3>A little space for something good.</h3>
+        <p>
+          No matching listings yet. Try another search or be the first to pass
+          something on.
+        </p>
+        <button class="pill" (click)="open('sell')">
+          List your first find +
+        </button>
+      </div>
+      }
+    </div>
+  </section>
+  <section class="manifesto">
+    <p class="eyebrow">02 / A DIFFERENT KIND OF MORE</p>
+    <h2>Less stuff.<br />More <em>stories.</em></h2>
+    <p>
+      A jacket with a past. A chair with a future.<br />Useful things, moving
+      between people.
+    </p>
+    <button class="pill" (click)="open('sell')">
+      Give it another beginning ↗
+    </button>
+  </section>
+</main>
+<footer>
+  <a class="wordmark" href="#">jugaad®</a>
+  <p>A second life for things you love.</p>
+  <span>Community marketplace / INR</span>
+</footer>
+@if(notice()){
+<div class="toast" role="status">
+  {{notice()}}<button
+    (click)="notice.set('')"
+    aria-label="Dismiss notification"
+  >
+    ×
+  </button>
+</div>
+} @if(panel()){
+<div class="backdrop">
+  <section
+    class="panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="panel-title"
+  >
+    <button class="close" (click)="panel.set('')" aria-label="Close dialog">
+      ×
+    </button>
+    @if(panel()==='auth'){
+    <p class="eyebrow">YOUR NEXT CHAPTER</p>
+    <h2 id="panel-title">
+      {{mode==='login'?'Welcome back.':'Hello, neighbour.'}}
+    </h2>
+    <p>Use an alias publicly. Your email stays private.</p>
+    <form (ngSubmit)="login()">
+      @if(mode==='register'){<label
+        >Public alias<input
+          name="alias"
+          [(ngModel)]="alias"
+          required
+          minlength="2"
+          maxlength="32" /></label
+      >}<label
+        >Email<input
+          name="email"
+          type="email"
+          [(ngModel)]="email"
+          required /></label
+      ><label
+        >Password (12–128 characters)<input
+          name="password"
+          type="password"
+          [(ngModel)]="password"
+          required
+          minlength="12"
+          maxlength="128" /></label
+      ><button class="pill" [disabled]="busy()">
+        {{mode==='login'?'Sign in':'Create account'}} ↗
+      </button>
+    </form>
+    <button
+      class="text-button"
+      (click)="mode=mode==='login'?'register':'login'"
+    >
+      {{mode==='login'?'New here? Create an account':'Already here? Sign in'}}</button
+    >} @if(panel()==='sell'){
+    <h2 id="panel-title">Pass it on.</h2>
+    <form (ngSubmit)="publish()">
+      <label
+        >Title<input
+          name="title"
+          [(ngModel)]="draft.title"
+          required
+          minlength="3"
+          maxlength="100" /></label
+      ><label
+        >The story<textarea
+          name="description"
+          [(ngModel)]="draft.description"
+          required
+          minlength="10"
+          maxlength="2000"
+        ></textarea></label
+      ><label
+        >Asking price (₹)<input
+          type="number"
+          name="price"
+          [(ngModel)]="draft.price"
+          min="1"
+          max="1000000"
+          step="1"
+          required /></label
+      ><label
+        >Category<select name="category" [(ngModel)]="draft.category">
+          @for(c of ['Wear','Living','Tech','Books'];track c){
+          <option>{{c}}</option>
+          }
+        </select></label
+      ><label
+        >Condition<select name="condition" [(ngModel)]="draft.condition">
+          @for(c of ['Like new','Good','Well loved'];track c){
+          <option>{{c}}</option>
+          }
+        </select></label
+      ><label
+        >Photo URL (HTTPS)<input
+          type="url"
+          name="image"
+          [(ngModel)]="draft.image"
+          pattern="https://.*"
+          required
+      /></label>
+      <p class="fine">
+        Use a public photo URL you have permission to share. Photo uploads and
+        payments are outside this edition.
+      </p>
+      <button class="pill" [disabled]="busy()">Publish listing ↗</button>
+    </form>
+    } @if(panel()==='item'&&selected();as item){
+    <h2 id="panel-title">{{item.title}}</h2>
+    <img
+      class="detail-image"
+      [src]="item.image"
+      [alt]="item.title"
+      referrerpolicy="no-referrer"
+    />
+    <p>{{item.description}}</p>
+    <p>{{item.condition}} · {{money(item.price)}} · {{item.status}}</p>
+    @if(item.seller!==session()?.id&&item.status==='available'){
+    <form (ngSubmit)="bid()">
+      <label
+        >Your offer (₹)<input
+          type="number"
+          name="offer"
+          [(ngModel)]="offer"
+          min="1"
+          max="1000000"
+          required /></label
+      ><button class="pill" [disabled]="busy()">Send offer ↗</button>
+    </form>
+    }@if(session()&&(item.seller!==session().id||buyer)){
+    <h3>Your conversation</h3>
+    <p class="fine">
+      Send an offer first so the seller can find your conversation in My
+      exchanges.
+    </p>
+    <button (click)="readMessages()" [disabled]="busy()">
+      Refresh messages ↻</button
+    >@for(m of messages();track m._id){
+    <div class="message">
+      <strong>{{m.alias}}</strong>
+      <p>{{m.content}}</p>
+    </div>
+    }
+    <form (ngSubmit)="send()">
+      <label
+        >Message<textarea
+          name="content"
+          [(ngModel)]="content"
+          required
+          maxlength="1000"
+        ></textarea></label
+      ><button class="pill" [disabled]="busy()">Send message ↗</button>
+    </form>
+    }} @if(panel()==='workspace'){
+    <h2 id="panel-title">My exchanges.</h2>
+    <p>
+      Your listings, offers and agreed sales. Arrange payment and collection
+      directly; no payment is taken here.
+    </p>
+    @for(item of workspace();track item._id){
+    <article class="exchange">
+      <h3>{{item.title}} · {{item.status}}</h3>
+      @for(o of item.offers;track o.id){
+      <p>{{o.alias}} offered {{money(o.amount)}}</p>
+      <button (click)="chat(item,o.buyer)">Conversation ↗</button
+      >@if(item.seller===session().id&&item.status==='available'){<button
+        (click)="accept(item,o)"
+        [disabled]="busy()"
+      >
+        Accept offer</button
+      >}}@if(!item.offers?.length){
+      <p>No offers yet.</p>
+      }
+    </article>
+    }@empty{
+    <p>
+      Your exchanges will appear here after you list an item or make an offer.
+    </p>
+    }}
+  </section>
+</div>
+}

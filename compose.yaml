@@ -1,0 +1,75 @@
+x-service: &service
+  build:
+    context: .
+    target: service
+  restart: unless-stopped
+  depends_on:
+    mongo:
+      condition: service_healthy
+  environment: &environment
+    JWT_SECRET: ${JWT_SECRET:?Run node scripts/setup.js first}
+    MONGO_URI: mongodb://root:${MONGO_PASSWORD:?Run setup first}@mongo:27017/?authSource=admin
+    PORT: 3000
+  healthcheck:
+    test:
+      [
+        CMD,
+        node,
+        -e,
+        "fetch('http://127.0.0.1:3000/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+      ]
+    interval: 15s
+    timeout: 5s
+    retries: 5
+services:
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Run setup first}
+    volumes: [mongo-data:/data/db]
+    healthcheck:
+      test:
+        [
+          CMD,
+          mongosh,
+          --quiet,
+          --eval,
+          "quit(db.adminCommand('ping').ok ? 0 : 1)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  identity:
+    <<: *service
+    environment:
+      <<: *environment
+      SERVICE: identity
+  marketplace:
+    <<: *service
+    environment:
+      <<: *environment
+      SERVICE: marketplace
+  messaging:
+    <<: *service
+    environment:
+      <<: *environment
+      SERVICE: messaging
+      MARKETPLACE_URL: http://marketplace:3000
+  gateway:
+    build:
+      context: .
+      target: gateway
+    restart: unless-stopped
+    depends_on:
+      identity: { condition: service_healthy }
+      marketplace: { condition: service_healthy }
+      messaging: { condition: service_healthy }
+    environment:
+      IDENTITY_URL: http://identity:3000
+      MARKETPLACE_URL: http://marketplace:3000
+      MESSAGING_URL: http://messaging:3000
+    ports: ["127.0.0.1:8080:8080"]
+volumes:
+  mongo-data:

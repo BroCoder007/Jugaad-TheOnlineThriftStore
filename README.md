@@ -1,88 +1,45 @@
-# JUGAAD Marketplace
+# Jugaad — good things, again
 
-Welcome to **JUGAAD Marketplace** – an online thrift store platform for buying and selling items in a smart, user-friendly environment. Users can browse listings, post items for sale, manage their purchase and sales history, leave reviews, and chat in real-time for negotiations and bidding.
+A MEAN marketplace: **MongoDB, Express, Angular 22 and Node.js 24**. Three independently deployable domain services sit behind a same-origin gateway. The original React/SQLite prototype is retained in `legacy/` for reference and is not served.
 
-## Features
+## What works
 
-- **User Authentication**: Secure login and registration.
-- **Item Listings**: Browse, post, and bid on items for sale.
-- **Purchase & Sales History**: Track your buying and selling activity.
-- **Review System**: Leave and view reviews for purchased items.
-- **Chat Interface**: Real-time chat for buyers and sellers.
-- **Customizable Settings**: Personalize your experience with themes, notifications, and privacy options.
+- Register/sign in with a public alias; email addresses stay in the identity database.
+- Browse and search listings, filter categories and publish a listing with an HTTPS photo URL.
+- Send one offer per buyer per listing; sellers view offers and accept one. Atomic acceptance prevents double sales.
+- Private buyer/seller conversations, refreshed on demand; participants cannot read other buyers’ threads.
+- My exchanges shows listings, submitted offers and agreed sales.
+- Responsive editorial design with floating forms, moving typography, hover effects, scroll reveals where supported and reduced-motion preferences. Inspired by the visual language of otsuka-air.jp, with original branding and CSS artwork.
 
-## Project Structure
+This edition coordinates offers and collection. It does not take payments, ship products, upload photos, provide live chat push, verify identities, offer password recovery, import old SQLite data, or implement reviews/Google login. A public alias is pseudonymity; messages and photos can still reveal personal information. Use synthetic data for your learning deployment.
 
-```
-Jugaad-TheOnlineThriftStore
-├── public/
-│   ├── app.js
-│   ├── index.html
-│   └── login.html
-├── src/
-│   ├── assets/
-│   ├── main.js
-│   ├── components/
-│   │   ├── ChatInterface.js
-│   │   ├── ItemList.js
-│   │   ├── PurchaseHistory.js
-│   │   ├── ReviewSystem.js
-│   │   ├── SalesHistory.js
-│   │   └── UserProfile.js
-│   ├── style/
-│   │   └── styles.css
-│   └── utils/
-│       └── api.js
-├── .github/
-│   └── workflows/
-│       └── github-pages.yml
-├── .gitattributes
-└── README.md
+## Run locally (Windows, macOS or Linux)
+
+Install Node.js 24.15+ and Docker Desktop with its Linux engine running. From this checkout:
+
+```powershell
+node scripts/setup.js
+docker compose up --build -d
 ```
 
-## Getting Started
+Open **http://localhost:8080**. Create two accounts with different email addresses and passwords of at least 12 characters. Publish an item as the first user, sign out, then make an offer and message the seller as the second user. Sign in as the seller, open **My exchanges**, reply and accept the offer. No real payment occurs.
 
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/BroCoder007/Jugaad-TheOnlineThriftStore.git
-   cd Jugaad-TheOnlineThriftStore
-   ```
+MongoDB data lives in the `mongo-data` volume. `docker compose down` stops the app and retains data. Do not remove that volume unless intentionally erasing your test data. `.env` contains generated local credentials and must stay private. The MongoDB port and domain services are not published to your network.
 
-2. **Install dependencies:**
-   ```sh
-   npm install
-   ```
+For frontend iteration: run `npm ci --ignore-scripts`, then `npm run dev` while Compose is up. Angular’s development server proxies API calls to port 8080.
 
-3. **Run the application:**
-   ```sh
-   npm start
-   ```
+## Verify
 
-4. **Build for production:**
-   ```sh
-   npm run build
-   ```
+```powershell
+npm ci --ignore-scripts
+npm run build
+npm test
+npm run test:integration
+npm audit
+```
 
-5. **Deploy to GitHub Pages:**
-   - The project uses GitHub Actions for deployment.
-   - See [.github/workflows/github-pages.yml](.github/workflows/github-pages.yml) for details.
+Integration tests start isolated MongoDB and four Node processes, check ownership, input validation, private messaging and concurrent offer acceptance, then stop them. The first run downloads an official MongoDB binary (about 750 MB on Windows). CI also builds both container targets. See [architecture and API](docs/ARCHITECTURE.md).
 
-## Main Components
+## Azure for Students
 
-- [`src/components/ItemList.js`](src/components/ItemList.js): Displays items for sale.
-- [`src/components/PurchaseHistory.js`](src/components/PurchaseHistory.js): Shows user's purchases.
-- [`src/components/SalesHistory.js`](src/components/SalesHistory.js): Shows user's sales.
-- [`src/components/ReviewSystem.js`](src/components/ReviewSystem.js): Review and rating system.
-- [`src/components/ChatInterface.js`](src/components/ChatInterface.js): Real-time chat between users.
-- [`src/components/UserProfile.js`](src/components/UserProfile.js): User profile and settings.
-- [`src/utils/api.js`](src/utils/api.js): API utility functions.
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for improvements or new features.
-
-## License
-
-This project is licensed under the MIT License.
-
-## Repository
+Follow [the complete Azure lab](docs/AZURE.md). It covers container publishing, a managed MongoDB-compatible database, internal service ingress, secret references, scaling, verification, troubleshooting, credit controls and cleanup. No Azure resources are created by cloning this repository. GitHub Pages cannot execute these services.
